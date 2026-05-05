@@ -56,7 +56,7 @@ export class Zone {
 
   public shouldDraw = false;
 
-  constructor(shape: Shapes) {
+  private constructor(shape: Shapes) {
     this.shape = shape;
     this.x = shape.centroid.x;
     this.y = shape.centroid.y;
@@ -84,7 +84,7 @@ export class Zone {
       const { x, y, z } = this.shape.coords;
       const radius = this.shape.radius;
 
-      return DrawMarker(28, x, y, z, 0, 0, 0, 0, 0, 0, radius, radius, radius, red, green, blue, alpha, false, false, 0, false, '', '', false)
+      return DrawMarker(28, x, y, z, 0, 0, 0, 0, 0, 0, radius, radius, radius, red, green, blue, alpha, false, false, 0, false, null as any, null as any, false)
     }
 
     if (this.shape instanceof Prism) {
@@ -107,9 +107,7 @@ export class Zone {
       }
 
       for (let i = 0; i < polygon.triangles.length; i++) {
-        const a = polygon.triangles[i]![0];
-        const b = polygon.triangles[i]![1];
-        const c = polygon.triangles[i]![2];
+        const [a, b, c] = polygon.triangles[i]!;
 
         DrawPoly(a.x, a.y, minZ, b.x, b.y, minZ, c.x, c.y, minZ, red, green, blue, alpha)
         DrawPoly(a.x, a.y, maxZ, b.x, b.y, maxZ, c.x, c.y, maxZ, red, green, blue, alpha)
