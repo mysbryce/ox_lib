@@ -89,8 +89,9 @@ export class Zone {
 
     if (this.shape instanceof Prism) {
       const polygon = this.shape.polygon;
-      const minZ = this.shape.z;
-      const maxZ = this.shape.z + this.shape.height;
+      const half = this.shape.height / 2;
+      const minZ = this.shape.z - half;
+      const maxZ = this.shape.z + half;
 
       for (let i = 0; i < polygon.vertices.length; i++) {
         const curr = polygon.vertices[i]!;
