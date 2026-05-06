@@ -29,10 +29,10 @@ local function assertType(id, var, expected)
     return true
 end
 
-local weakmt = { __mode = 'kv' }
+local weakkeys = { __mode = 'k' }
 
 ---@type { [OxClass]: { [function]: true } }
-local classes = setmetatable({}, weakmt)
+local classes = setmetatable({}, weakkeys)
 
 ---@alias OxClassConstructor<T> fun(self: T, ...: unknown): nil
 
@@ -43,7 +43,7 @@ local classes = setmetatable({}, weakmt)
 ---@field protected super? OxClassConstructor
 ---@field protected constructor? OxClassConstructor
 local mixins = {}
-local constructors = {}
+local constructors = setmetatable({}, weakkeys)
 
 ---Somewhat hacky way to remove the constructor from the class.__index.
 ---Maybe add static fields in the future?
@@ -180,7 +180,7 @@ function lib.class(name, super)
         setmetatable(class, super)
     end
 
-    classes[class] = setmetatable({}, weakmt)
+    classes[class] = setmetatable({}, weakkeys)
 
     return class
 end
