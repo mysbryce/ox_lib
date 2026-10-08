@@ -29,6 +29,11 @@ local function getModuleInfo(modName)
         return resource, modName:sub(#resource + 3)
     end
 
+    if modName:find('^Ox/') then
+        modName = modName:gsub('^Ox/', 'modules/')
+        return lib.name, modName
+    end
+
     local idx = 4 -- call stack depth (kept slightly lower than expected depth "just in case")
 
     while true do
@@ -87,7 +92,7 @@ local function loadModule(modName, env)
         local resource = tempData[2]
 
         table.wipe(tempData)
-        return assert(load(file, ('@@%s/%s'):format(resource, fileName), 't', env or _ENV))
+        return assert(load(file, ('@@%s/%s'):format(resource, fileName), 't', env or _ENV)), fileName
     end
 
     return nil, err or 'unknown error'
@@ -172,16 +177,16 @@ function lib.require(modName)
     local err = {}
 
     for i = 1, #package.searchers do
-        local result, errMsg = package.searchers[i](modName)
+        local loader, data = package.searchers[i](modName)
 
-        if result then
-            if type(result) == 'function' then result = result() end
-            loaded[modName] = result or result == nil
+        if loader then
+            if type(loader) == 'function' then loader = loader(modName, data) end
+            loaded[modName] = loader or loader == nil
 
             return loaded[modName]
         end
 
-        err[#err + 1] = errMsg
+        err[#err + 1] = data
     end
 
     error(("%s"):format(table.concat(err, "\n\t")))
